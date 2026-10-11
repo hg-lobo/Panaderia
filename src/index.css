@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SISTEMA DE DISEÑO — Sistema Experto POS
+   ============================================================ */
+
+@theme {
+  --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --color-accent-50:  #ecfdf5;
+  --color-accent-100: #d1fae5;
+  --color-accent-200: #a7f3d0;
+  --color-accent-300: #6ee7b7;
+  --color-accent-400: #34d399;
+  --color-accent-500: #10b981;
+  --color-accent-600: #059669;
+  --color-accent-700: #047857;
+  --color-accent-800: #065f46;
+  --color-accent-900: #064e3b;
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Grid editorial sutil para fondos */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(0 0 0 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg-grid-dark {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ============================================================
+   ANIMACIONES
+   ============================================================ */
+
+/* Fade + slide desde abajo (para cards al cargar) */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade simple */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Zoom ligero para modales */
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Shimmer para el gradiente decorativo */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Pulso suave */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Rotación continua */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Clases utilitarias */
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+.animate-zoom-in {
+  animation: zoom-in 0.25s ease-out both;
+}
+
+.animate-shimmer {
+  background-size: 200% 200%;
+  animation: shimmer 8s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2.5s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Delays escalonados para listas */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Gradiente animado para fondos decorativos */
+.bg-gradient-animated {
+  background: linear-gradient(
+    135deg,
+    #0a0a0a 0%,
+    #171717 25%,
+    #064e3b 50%,
+    #0a0a0a 75%,
+    #0a0a0a 100%
+  );
+  background-size: 400% 400%;
+  animation: shimmer 15s ease infinite;
+}
+
+/* Textura de puntos para fondos */
+.bg-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
