@@ -2,7 +2,7 @@
 
 import {
   LayoutDashboard, Package, Gift, ShoppingCart,
-  RotateCcw, ScrollText, ChevronLeft, BarChart3,
+  RotateCcw, ScrollText, BarChart3, ChevronLeft, ChevronRight, X,
 } from 'lucide-react';
 
 export type RutaPanel =
@@ -15,17 +15,19 @@ export type RutaPanel =
   | 'reglas';
 
 interface SidebarProps {
-  rutaActiva: RutaPanel;
-  onNavegar: (ruta: RutaPanel) => void;
-  colapsado: boolean;
-  onToggleColapso: () => void;
+  readonly rutaActiva: RutaPanel;
+  readonly onNavegar: (ruta: RutaPanel) => void;
+  readonly colapsado: boolean;
+  readonly onToggleColapso: () => void;
+  readonly esMovil?: boolean;
+  readonly onCerrarMovil?: () => void;
 }
 
 interface ItemNav {
-  id: RutaPanel;
-  label: string;
-  icono: React.ReactNode;
-  descripcion: string;
+  readonly id: RutaPanel;
+  readonly label: string;
+  readonly icono: React.ReactNode;
+  readonly descripcion: string;
 }
 
 const ITEMS: ItemNav[] = [
@@ -75,25 +77,29 @@ const ITEMS: ItemNav[] = [
 
 export function Sidebar({
   rutaActiva, onNavegar, colapsado, onToggleColapso,
+  esMovil = false, onCerrarMovil,
 }: SidebarProps) {
   return (
     <aside
-      className={`${
-        colapsado ? 'w-18' : 'w-64'
-      } h-screen shrink-0 border-r border-neutral-800 bg-neutral-950 transition-all duration-200 flex flex-col`}
+      className={`relative h-screen shrink-0 border-r border-neutral-800 bg-neutral-950 flex flex-col transition-[width] duration-300 ease-in-out ${
+        colapsado && !esMovil ? 'w-18' : 'w-64'
+      }`}
     >
       {/* ============================================================
-          Marca — logo + nombre de la panadería
+          Header de la marca
           ============================================================ */}
-      <div className="h-20 px-5 flex items-center gap-3 border-b border-neutral-800">
-        {/* Ícono de la panadería */}
-        <div className="h-10 w-10 shrink-0 ">
+      <div
+        className={`h-20 border-b border-neutral-800 flex items-center transition-all duration-300 ${
+          colapsado && !esMovil ? 'px-0 justify-center' : 'px-5 gap-3'
+        }`}
+      >
+        {/* Logo */}
+        <div className="h-10 w-10 shrink-0 border border-amber-600/40 bg-neutral-900 flex items-center justify-center overflow-hidden">
           <img
             src="/logo-don-christopher.png"
             alt="El Horno de Don Christopher"
             className="h-full w-full object-cover"
             onError={(e) => {
-              // Fallback si la imagen aún no existe
               e.currentTarget.style.display = 'none';
               const padre = e.currentTarget.parentElement;
               if (padre) {
@@ -104,70 +110,105 @@ export function Sidebar({
           />
         </div>
 
-        {!colapsado && (
-          <div className="overflow-hidden">
-            <p className="font-display text-xs font-bold text-white tracking-tight whitespace-nowrap leading-tight">
-              El Horno de
-            </p>
-            <p className="font-display text-xs font-bold text-amber-400 tracking-tight whitespace-nowrap leading-tight">
-              Don Christopher
-            </p>
-          </div>
+        {/* Texto de la marca — fade-out cuando colapsa */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out flex-1 ${
+            colapsado && !esMovil
+              ? 'max-w-0 opacity-0'
+              : 'max-w-50 opacity-100'
+          }`}
+        >
+          <p className="font-display text-xs font-bold text-white tracking-tight whitespace-nowrap leading-tight">
+            El Horno de
+          </p>
+          <p className="font-display text-xs font-bold text-amber-400 tracking-tight whitespace-nowrap leading-tight">
+            Don Christopher
+          </p>
+        </div>
+
+        {/* Botón X solo en móvil */}
+        {esMovil && (
+          <button
+            onClick={onCerrarMovil}
+            className="h-8 w-8 flex items-center justify-center text-neutral-500 hover:text-white transition-colors -mr-2 ml-auto"
+            aria-label="Cerrar menú"
+          >
+            <X className="h-4 w-4" />
+          </button>
         )}
       </div>
 
       {/* ============================================================
           Navegación
           ============================================================ */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+      <nav
+        className={`flex-1 space-y-1 overflow-y-auto overflow-x-hidden transition-all duration-300 ${
+          colapsado && !esMovil ? 'px-2 py-3' : 'p-3'
+        }`}
+      >
         {ITEMS.map((item) => {
           const activo = rutaActiva === item.id;
+          const colapsadoReal = colapsado && !esMovil;
+
           return (
             <button
               key={item.id}
               onClick={() => onNavegar(item.id)}
-              title={colapsado ? item.label : undefined}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors group ${
+              title={colapsadoReal ? item.label : undefined}
+              className={`w-full flex items-center transition-colors group relative ${
+                colapsadoReal
+                  ? 'justify-center px-0 py-3'
+                  : 'gap-3 px-3 py-2.5'
+              } ${
                 activo
                   ? 'bg-amber-700/15 border-l-2 border-amber-500 text-white'
                   : 'border-l-2 border-transparent text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100'
               }`}
             >
-              <span className={`shrink-0 ${activo ? 'text-amber-400' : ''}`}>
+              <span
+                className={`shrink-0 ${activo ? 'text-amber-400' : ''}`}
+              >
                 {item.icono}
               </span>
-              {!colapsado && (
-                <div className="overflow-hidden">
-                  <p className="text-sm font-medium whitespace-nowrap">
-                    {item.label}
-                  </p>
-                  <p className="text-[10px] tracking-wider uppercase text-neutral-500 whitespace-nowrap">
-                    {item.descripcion}
-                  </p>
-                </div>
-              )}
+
+              {/* Texto con fade-out */}
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  colapsadoReal
+                    ? 'max-w-0 opacity-0 ml-0'
+                    : 'max-w-45 opacity-100 ml-0'
+                }`}
+              >
+                <p className="text-sm font-medium whitespace-nowrap text-left">
+                  {item.label}
+                </p>
+                <p className="text-[10px] tracking-wider uppercase text-neutral-500 whitespace-nowrap text-left">
+                  {item.descripcion}
+                </p>
+              </div>
             </button>
           );
         })}
       </nav>
 
       {/* ============================================================
-          Botón colapsar
+          Botón de colapsar — SOLO en desktop
+          Vive en el borde derecho del sidebar
           ============================================================ */}
-      <div className="border-t border-neutral-800 p-3">
+      {!esMovil && (
         <button
           onClick={onToggleColapso}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-neutral-500 hover:text-neutral-200 transition-colors"
-          title={colapsado ? 'Expandir' : 'Colapsar'}
+          className="absolute top-1/2 -right-3 -translate-y-1/2 z-10 h-7 w-7 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-amber-700 hover:border-amber-600 transition-all shadow-lg"
+          title={colapsado ? 'Expandir sidebar' : 'Colapsar sidebar'}
+          aria-label={colapsado ? 'Expandir sidebar' : 'Colapsar sidebar'}
         >
-          <ChevronLeft
-            className={`h-4 w-4 transition-transform ${
-              colapsado ? 'rotate-180' : ''
-            }`}
-          />
-          {!colapsado && <span>Colapsar</span>}
+          {colapsado ? (
+            <ChevronRight className="h-3.5 w-3.5" />
+          ) : (
+            <ChevronLeft className="h-3.5 w-3.5" />
+          )}
         </button>
-      </div>
+      )}
     </aside>
   );
 }
